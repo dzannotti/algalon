@@ -8,10 +8,10 @@
 # 4. Run: docker-compose up -d
 #
 # Access after Pi-hole DNS is configured (point router DNS to algalon IP):
-# - jellyfin.algalon.local - Media streaming
-# - jellyseerr.algalon.local - Request movies/shows
-# - radarr.algalon.local, sonarr.algalon.local, etc.
-# - pihole.algalon.local - Ad blocking admin
+# - jellyfin.algalon.lan - Media streaming
+# - jellyseerr.algalon.lan - Request movies/shows
+# - radarr.algalon.lan, sonarr.algalon.lan, etc.
+# - pihole.algalon.lan - Ad blocking admin
 
 networks:
   servarrnetwork:
