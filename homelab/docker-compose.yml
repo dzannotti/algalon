@@ -89,17 +89,11 @@ services:
   caddy:
     image: caddy:latest
     container_name: caddy
-    ports:
-      - 80:80
-      - 443:443
-      - 443:443/udp # HTTP/3
+    network_mode: host
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - ./caddy_data:/data
       - ./caddy_config:/config
-    networks:
-      servarrnetwork:
-        ipv4_address: 172.39.0.14
     restart: unless-stopped
 
   # ============================================================================

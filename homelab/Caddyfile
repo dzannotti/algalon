@@ -1,66 +1,70 @@
 # Algalon Homelab Reverse Proxy Configuration
 # Local DNS resolution via Pi-hole (point router DNS to algalon IP)
 
+{
+    auto_https off
+}
+
 # ============================================================================
 # MEDIA SERVICES
 # ============================================================================
 
-jellyfin.algalon.local {
-    reverse_proxy 172.39.0.10:8096
+http://jellyfin.algalon.local {
+    reverse_proxy localhost:8096
 }
 
-jellyseerr.algalon.local {
-    reverse_proxy 172.39.0.9:5055
+http://jellyseerr.algalon.local {
+    reverse_proxy localhost:5055
 }
 
 # ============================================================================
 # MEDIA MANAGEMENT (*ARR STACK)
 # ============================================================================
 
-sonarr.algalon.local {
-    reverse_proxy 172.39.0.3:8989
+http://sonarr.algalon.local {
+    reverse_proxy localhost:8989
 }
 
-radarr.algalon.local {
-    reverse_proxy 172.39.0.4:7878
+http://radarr.algalon.local {
+    reverse_proxy localhost:7878
 }
 
-lidarr.algalon.local {
-    reverse_proxy 172.39.0.5:8686
+http://lidarr.algalon.local {
+    reverse_proxy localhost:8686
 }
 
-bazarr.algalon.local {
-    reverse_proxy 172.39.0.6:6767
+http://bazarr.algalon.local {
+    reverse_proxy localhost:6767
 }
 
 # ============================================================================
 # DOWNLOAD CLIENTS (Through Gluetun VPN)
 # ============================================================================
 
-qbittorrent.algalon.local {
-    reverse_proxy 172.39.0.2:8080
+http://qbittorrent.algalon.local {
+    reverse_proxy localhost:8080
 }
 
-nzbget.algalon.local {
-    reverse_proxy 172.39.0.2:6789
+http://nzbget.algalon.local {
+    reverse_proxy localhost:6789
 }
 
-prowlarr.algalon.local {
-    reverse_proxy 172.39.0.2:9696
+http://prowlarr.algalon.local {
+    reverse_proxy localhost:9696
 }
 
 # ============================================================================
 # NETWORKING & UTILITIES
 # ============================================================================
 
-pihole.algalon.local {
-    reverse_proxy 172.39.0.15:80
+http://pihole.algalon.local {
+    reverse_proxy localhost:8082
 }
 
-syncthing.algalon.local {
-    reverse_proxy 172.39.0.11:8384
+http://syncthing.algalon.local {
+    reverse_proxy localhost:8384
 }
 
-ntfy.algalon.local {
-    reverse_proxy 172.39.0.12:80
+http://ntfy.algalon.local {
+    reverse_proxy localhost:8585
 }
