@@ -57,8 +57,8 @@ A repeatable, version-controlled setup that transforms a bare Arch Linux install
 # Clone to expected location
 git clone https://github.com/dzannotti/algalon.git ~/.local/share/algalon
 
-# Run bootstrap
-source ~/.local/share/algalon/boot.sh
+# Run bootstrap (use bash, not source)
+bash ~/.local/share/algalon/boot.sh
 ```
 
 ### Post-Install
