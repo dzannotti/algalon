@@ -24,3 +24,6 @@ source "$ALGALON_INSTALL/config/localdb.sh"
 # Development tools
 source "$ALGALON_INSTALL/config/tmux.sh"
 source "$ALGALON_INSTALL/config/mise.sh"
+
+# Docker & Homelab
+source "$ALGALON_INSTALL/config/docker.sh"
