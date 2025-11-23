@@ -170,6 +170,18 @@ services:
     network_mode: service:gluetun
     restart: unless-stopped
 
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      - TZ=${TZ}
+    ports:
+      - 8191:8191
+    networks:
+      servarrnetwork:
+        ipv4_address: 172.39.0.16
+    restart: unless-stopped
+
   # ============================================================================
   # MEDIA MANAGEMENT (*ARR STACK)
   # ============================================================================
