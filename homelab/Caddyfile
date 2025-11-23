@@ -3,68 +3,72 @@
 
 {
     auto_https off
+    http_port 80
+    https_port 443
 }
 
 # ============================================================================
 # MEDIA SERVICES
 # ============================================================================
 
-http://jellyfin.algalon.local {
-    reverse_proxy localhost:8096
-}
+:80 {
+    @jellyfin host jellyfin.algalon.local
+    handle @jellyfin {
+        reverse_proxy localhost:8096
+    }
 
-http://jellyseerr.algalon.local {
-    reverse_proxy localhost:5055
-}
+    @jellyseerr host jellyseerr.algalon.local
+    handle @jellyseerr {
+        reverse_proxy localhost:5055
+    }
 
-# ============================================================================
-# MEDIA MANAGEMENT (*ARR STACK)
-# ============================================================================
+    @sonarr host sonarr.algalon.local
+    handle @sonarr {
+        reverse_proxy localhost:8989
+    }
 
-http://sonarr.algalon.local {
-    reverse_proxy localhost:8989
-}
+    @radarr host radarr.algalon.local
+    handle @radarr {
+        reverse_proxy localhost:7878
+    }
 
-http://radarr.algalon.local {
-    reverse_proxy localhost:7878
-}
+    @lidarr host lidarr.algalon.local
+    handle @lidarr {
+        reverse_proxy localhost:8686
+    }
 
-http://lidarr.algalon.local {
-    reverse_proxy localhost:8686
-}
+    @bazarr host bazarr.algalon.local
+    handle @bazarr {
+        reverse_proxy localhost:6767
+    }
 
-http://bazarr.algalon.local {
-    reverse_proxy localhost:6767
-}
+    @qbittorrent host qbittorrent.algalon.local
+    handle @qbittorrent {
+        reverse_proxy localhost:8080
+    }
 
-# ============================================================================
-# DOWNLOAD CLIENTS (Through Gluetun VPN)
-# ============================================================================
+    @nzbget host nzbget.algalon.local
+    handle @nzbget {
+        reverse_proxy localhost:6789
+    }
 
-http://qbittorrent.algalon.local {
-    reverse_proxy localhost:8080
-}
+    @prowlarr host prowlarr.algalon.local
+    handle @prowlarr {
+        reverse_proxy localhost:9696
+    }
 
-http://nzbget.algalon.local {
-    reverse_proxy localhost:6789
-}
+    @pihole host pihole.algalon.local
+    handle @pihole {
+        reverse_proxy localhost:8082
+    }
 
-http://prowlarr.algalon.local {
-    reverse_proxy localhost:9696
-}
+    @syncthing host syncthing.algalon.local
+    handle @syncthing {
+        reverse_proxy localhost:8384
+    }
 
-# ============================================================================
-# NETWORKING & UTILITIES
-# ============================================================================
-
-http://pihole.algalon.local {
-    reverse_proxy localhost:8082
-}
-
-http://syncthing.algalon.local {
-    reverse_proxy localhost:8384
-}
-
-http://ntfy.algalon.local {
-    reverse_proxy localhost:8585
+    @ntfy host ntfy.algalon.local
+    handle @ntfy {
+        reverse_proxy localhost:8585
+    }
 }
