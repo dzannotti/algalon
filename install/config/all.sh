@@ -1,38 +1,26 @@
 #!/bin/bash
+# Configuration phase - set up system and user configs
+
+# Shell setup
 source "$ALGALON_INSTALL/config/zsh.sh"
 
+# Hardware configuration
 source "$ALGALON_INSTALL/config/hardware/bluetooth.sh"
 source "$ALGALON_INSTALL/config/hardware/network.sh"
-source "$ALGALON_INSTALL/config/hardware/nvidia.sh"
-source "$ALGALON_INSTALL/config/hardware/printer.sh"
 source "$ALGALON_INSTALL/config/hardware/set-wireless-regdom.sh"
 source "$ALGALON_INSTALL/config/hardware/usb-autosuspend.sh"
 source "$ALGALON_INSTALL/config/hardware/fix-f13-amd-audio-input.sh"
-source "$ALGALON_INSTALL/config/hardware/fix-fkeys.sh"
 
+# System configuration
 source "$ALGALON_INSTALL/config/config.sh"
-source "$ALGALON_INSTALL/config/disable-gnome-tour.sh"
 source "$ALGALON_INSTALL/config/gpg.sh"
 source "$ALGALON_INSTALL/config/timezones.sh"
 source "$ALGALON_INSTALL/config/fast-shutdown.sh"
 source "$ALGALON_INSTALL/config/increase-sudo-tries.sh"
 source "$ALGALON_INSTALL/config/increase-lockout-limit.sh"
 source "$ALGALON_INSTALL/config/ssh-flakiness.sh"
-source "$ALGALON_INSTALL/config/mimetypes.sh"
-source "$ALGALON_INSTALL/config/nvim.sh"
-source "$ALGALON_INSTALL/config/tmux.sh"
-source "$ALGALON_INSTALL/config/vscode.sh"
-source "$ALGALON_INSTALL/config/chrome.sh"
-source "$ALGALON_INSTALL/config/fix-powerprofilesctl-shebang.sh"
 source "$ALGALON_INSTALL/config/localdb.sh"
-source "$ALGALON_INSTALL/config/gnome-theme.sh"
-source "$ALGALON_INSTALL/config/wallpapers.sh"
-source "$ALGALON_INSTALL/config/custom-fonts.sh"
-source "$ALGALON_INSTALL/config/keybindings.sh"
-source "$ALGALON_INSTALL/config/portals.sh"
-source "$ALGALON_INSTALL/config/ddcutil.sh"
-source "$ALGALON_INSTALL/config/walker.sh"
-source "$ALGALON_INSTALL/config/gdm.sh"
-source "$ALGALON_INSTALL/config/gnome-keyring-pam.sh"
-# NOTE: gnome-extensions.sh must be run after first boot into GNOME
-# source "$ALGALON_INSTALL/config/gnome-extensions.sh"
+
+# Development tools
+source "$ALGALON_INSTALL/config/tmux.sh"
+source "$ALGALON_INSTALL/config/mise.sh"
