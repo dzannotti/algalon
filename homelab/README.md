@@ -100,8 +100,8 @@ docker-compose up -d
 1. Access Pi-hole at `http://algalon-ip:8082/admin`
 2. Login with password from .env
 3. Go to **Local DNS > DNS Records**
-4. Add A record: `algalon.lan` → `algalon-ip` (e.g., 192.168.1.54)
-5. Pi-hole will automatically resolve `*.algalon.lan` via Caddy
+4. Add A record: `algalon.com` → `algalon-ip` (e.g., 192.168.1.54)
+5. Pi-hole will automatically resolve `*.algalon.com` via Caddy
 
 #### On Your Router:
 1. Set primary DNS to algalon IP (e.g., 192.168.1.54)
@@ -112,17 +112,17 @@ docker-compose up -d
 
 After DNS is configured:
 
-- **Jellyfin**: http://jellyfin.algalon.lan
-- **Jellyseerr**: http://jellyseerr.algalon.lan
-- **Radarr**: http://radarr.algalon.lan
-- **Sonarr**: http://sonarr.algalon.lan
-- **Lidarr**: http://lidarr.algalon.lan
-- **Bazarr**: http://bazarr.algalon.lan
-- **qBittorrent**: http://qbittorrent.algalon.lan
-- **Prowlarr**: http://prowlarr.algalon.lan
-- **Pi-hole**: http://pihole.algalon.lan
-- **Syncthing**: http://syncthing.algalon.lan
-- **ntfy**: http://ntfy.algalon.lan
+- **Jellyfin**: http://jellyfin.algalon.com
+- **Jellyseerr**: http://jellyseerr.algalon.com
+- **Radarr**: http://radarr.algalon.com
+- **Sonarr**: http://sonarr.algalon.com
+- **Lidarr**: http://lidarr.algalon.com
+- **Bazarr**: http://bazarr.algalon.com
+- **qBittorrent**: http://qbittorrent.algalon.com
+- **Prowlarr**: http://prowlarr.algalon.com
+- **Pi-hole**: http://pihole.algalon.com
+- **Syncthing**: http://syncthing.algalon.com
+- **ntfy**: http://ntfy.algalon.com
 
 Or via direct IP:port before DNS is set up (see docker-compose.yml for ports).
 
@@ -215,7 +215,7 @@ docker exec qbittorrent curl ifconfig.me
 ### DNS not resolving
 
 1. Check Pi-hole is running: `docker ps | grep pihole`
-2. Test DNS: `nslookup jellyfin.algalon.lan algalon-ip`
+2. Test DNS: `nslookup jellyfin.algalon.com algalon-ip`
 3. Check router DNS settings point to algalon
 
 ### Can't access services
