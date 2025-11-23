@@ -1,17 +1,12 @@
 #!/bin/bash
 
-ansi_art='
-▄▄▄▄  ▄ ▄▄▄▄  ▄  ▄▄▄ ▄▄▄  ▄▄▄▄
-█ █ █ ▄ █ █ █ ▄ █   █   █ █   █
-█   █ █ █   █ █ █   ▀▄▄▄▀ █   █
-      █       █                 '
+ALGALON_PATH="$HOME/.local/share/algalon"
 
 clear
-echo -e "\n$ansi_art\n"
+source "$ALGALON_PATH/ascii-art.sh"
+echo
 echo "Running post-installation configuration..."
 echo
-
-ALGALON_PATH="$HOME/.local/share/algalon"
 
 # Run first-run scripts in order
 echo "→ Configuring DNS resolver..."
