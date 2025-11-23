@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# Screenshot tool with annotation support using satty
+# Works on GNOME Wayland
+
+[[ -f ~/.config/user-dirs.dirs ]] && source ~/.config/user-dirs.dirs
+OUTPUT_DIR="${ALGALON_SCREENSHOT_DIR:-${XDG_PICTURES_DIR:-$HOME/Pictures}}"
+
+if [[ ! -d "$OUTPUT_DIR" ]]; then
+  notify-send "Screenshot directory does not exist: $OUTPUT_DIR" -u critical -t 3000
+  mkdir -p "$OUTPUT_DIR"
+fi
+
+pkill slurp && exit 0
+
+MODE="${1:-region}"
+
+# Use slurp to select region on GNOME Wayland
+case "$MODE" in
+  region)
+    SELECTION=$(slurp 2>/dev/null)
+    ;;
+  fullscreen)
+    # Get the focused monitor geometry
+    SELECTION=$(gnome-monitor-config list | grep -A10 "focused" | grep "geometry" | awk '{print $2}' | head -n1)
+    # Fallback to getting primary monitor if above doesn't work
+    if [[ -z "$SELECTION" ]]; then
+      SELECTION=$(grim -l | grep -m1 "^[0-9]" | awk '{print $2}')
+    fi
+    ;;
+  *)
+    SELECTION=$(slurp 2>/dev/null)
+    ;;
+esac
+
+[ -z "$SELECTION" ] && exit 0
+
+# Capture screenshot and open in satty for annotation
+grim -g "$SELECTION" - |
+  satty --filename - \
+    --output-filename "$OUTPUT_DIR/screenshot-$(date +'%Y-%m-%d_%H-%M-%S').png" \
+    --early-exit \
+    --copy-command 'wl-copy' \
+    --initial-tool crop

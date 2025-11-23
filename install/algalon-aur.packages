@@ -1,0 +1,38 @@
+# Algalon AUR packages (installed via yay)
+
+# GNOME Desktop & Themes
+gdm-settings
+qogir-icon-theme
+qogir-cursor-theme
+
+# Development Tools
+visual-studio-code-bin
+bun-bin
+
+# CLI Utilities
+wayfreeze
+gallery-dl
+
+# Applications
+google-chrome
+spotify
+ferdium-bin
+zoom
+walker
+elephant
+elephant-bluetooth
+elephant-calc
+elephant-clipboard
+elephant-desktopapplications
+elephant-files
+elephant-menus
+elephant-providerlist
+elephant-runner
+elephant-symbols
+elephant-todo
+elephant-unicode
+elephant-websearch
+typora
+
+# Package management (must be installed first)
+yay

@@ -1,0 +1,4 @@
+# GDM Profile - sets up dconf database location for GDM user
+user-db:user
+system-db:gdm
+file-db:/usr/share/gdm/greeter-dconf-defaults

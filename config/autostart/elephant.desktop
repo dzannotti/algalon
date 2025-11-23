@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Elephant Service
+Comment=Preload Elephant modules for Walker
+Exec=elephant
+Terminal=false
+X-GNOME-Autostart-enabled=true
+Hidden=true

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Walker Service
+Comment=Preload Walker application launcher service for faster startup
+Exec=sh -c "walker --gapplication-service"
+Terminal=false
+X-GNOME-Autostart-enabled=true
+Hidden=true

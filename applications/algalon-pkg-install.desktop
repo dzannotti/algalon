@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Install Package (pacman)
+Comment=Install a package from official repositories
+Icon=gnome-robots
+Exec=ghostty --window-width=80 --window-height=40 --title="Install Package" -e bash -c 'export PATH="$HOME/.local/share/algalon/bin:$PATH"; algalon-show-logo; algalon-pkg-install'
+Terminal=false
+Categories=System;PackageManager;
+Keywords=install;package;pacman;algalon;

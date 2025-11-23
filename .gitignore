@@ -1,0 +1,7 @@
+.DS_Store
+# Local-only files (keys, secrets, personal config)
+gpg-public-key.asc
+*.gpg
+*.key
+local.conf
+.env

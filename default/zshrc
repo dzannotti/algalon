@@ -1,0 +1,13 @@
+# Algalon zshrc - sources config from ~/.config/zsh/
+export PATH=$PATH:~/.local/bin:~/.local/share/algalon/bin:~/.cargo/bin
+
+# Source zsh configuration
+source ~/.config/zsh/zshrc
+source ~/.config/zsh/plugins
+source ~/.config/zsh/aliases
+
+# Initialize zoxide
+eval "$(zoxide init zsh)"
+
+# Initialize starship prompt
+eval "$(starship init zsh)"

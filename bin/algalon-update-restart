@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Check if system needs reboot after updates
+# Detects kernel updates and prompts for restart
+
+# Check if running kernel version matches installed kernel
+if [ "$(uname -r | sed 's/-arch/\.arch/')" != "$(pacman -Q linux | awk '{print $2}')" ]; then
+  gum confirm "Linux kernel has been updated. Reboot?" && sudo reboot now
+  exit 0
+fi
+
+# Check for other services that need restart
+# (can be extended to detect systemd services needing restart)
+echo "No reboot required"

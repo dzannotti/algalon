@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Electron 36
+Exec=electron36
+Type=Application
+NoDisplay=true

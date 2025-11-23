@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=PBP Mode ON
+Comment=Enable Picture-by-Picture mode on Dell monitor
+Icon=gnome-robots
+Exec=/home/dzannotti/.local/share/algalon/bin/dell-pbp-on
+Terminal=false
+Categories=Settings;HardwareSettings;
+Keywords=pbp;picture;monitor;display;dell;on;algalon;

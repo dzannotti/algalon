@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Kill existing walker and elephant processes
+pkill elephant
+pkill walker
+
+# Wait a moment for processes to terminate
+sleep 0.5
+
+# Restart elephant first
+elephant &
+sleep 0.5
+
+# Restart walker service
+walker --gapplication-service &
+
+echo "Walker and Elephant services restarted"

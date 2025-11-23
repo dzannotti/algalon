@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Remove Package
+Comment=Remove installed packages from your system
+Icon=gnome-robots
+Exec=ghostty --window-width=80 --window-height=40 --title="Remove Package" -e bash -c 'export PATH="$HOME/.local/share/algalon/bin:$PATH"; algalon-show-logo; algalon-pkg-remove'
+Terminal=false
+Categories=System;PackageManager;
+Keywords=remove;uninstall;package;pacman;algalon;

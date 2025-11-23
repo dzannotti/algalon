@@ -1,0 +1,7 @@
+#!/bin/bash
+
+clear
+# Use ALGALON_PATH if set, otherwise default to the repo location
+ALGALON_PATH="${ALGALON_PATH:-$HOME/.local/share/algalon}"
+source "$ALGALON_PATH/ascii-art.sh"
+echo

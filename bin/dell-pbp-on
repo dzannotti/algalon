@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Enable PBP (Picture-by-Picture) mode on Dell ultrawide monitor
+/home/dzannotti/.local/share/algalon/bin/dell-monitor pbp_mode
+# Update state file for toggle script
+mkdir -p "$HOME/.cache"
+echo "on" > "$HOME/.cache/algalon-pbp-state"

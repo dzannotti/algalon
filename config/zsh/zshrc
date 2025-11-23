@@ -1,0 +1,35 @@
+HISTFILE=~/.history
+HISTSIZE=10000
+SAVEHIST=50000
+
+setopt inc_append_history
+setopt hist_ignore_all_dups
+setopt hist_find_no_dups
+
+# begone annoying ~ in terminal paste
+unset zle_bracketed_paste
+
+# Load zsh plugins
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# Explicit key bindings (some terminals need these)
+bindkey "\e[3~" delete-char
+bindkey "\e[H"  beginning-of-line
+bindkey "\e[F"  end-of-line
+bindkey "\e[27;2;13~" self-insert-unmeta  # Shift+Enter for newline without executing
+
+# fzf integration for better Ctrl+R history search
+source /usr/share/fzf/key-bindings.zsh
+source /usr/share/fzf/completion.zsh
+
+# fzf configuration
+export FZF_DEFAULT_OPTS="
+  --color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8
+  --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc
+  --color=marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8
+  --height 40% --layout=reverse --border"
+
+# Use fd for fzf file search (faster and respects .gitignore)
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"

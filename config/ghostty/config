@@ -1,0 +1,43 @@
+# Font
+font-family = "MonoLisa Nerd Font Mono"
+font-size = 13
+font-thicken = true
+
+# Window
+window-theme = ghostty
+window-width = 180
+window-height = 70
+confirm-close-surface=false
+resize-overlay = never
+gtk-toolbar-style = flat
+theme = catppuccin.conf
+scrollback-limit = 2147483648
+background-opacity = 0.93
+background-blur = true
+#window-titlebar-background=#1e1e2e
+#window-titlebar-foreground=#cdd6f4
+
+# Cursor styling
+cursor-style = "block"
+cursor-style-blink = false
+
+# Clipboard/Paste settings
+clipboard-paste-protection = false
+clipboard-paste-bracketed-safe = false
+
+# Keyboard bindings
+keybind = shift+insert=paste_from_clipboard
+keybind = control+insert=copy_to_clipboard
+
+# Pass through system keybindings to GNOME
+keybind = ctrl+space=ignore
+keybind = ctrl+alt+h=ignore
+keybind = ctrl+alt+j=ignore
+keybind = ctrl+alt+k=ignore
+keybind = ctrl+alt+l=ignore
+keybind = ctrl+alt+semicolon=ignore
+keybind = ctrl+shift+four=ignore
+
+# Fix Delete key (ensure it sends proper escape sequence)
+keybind = delete=text:\x1b[3~
+keybind = shift+enter=text:\x1b\r

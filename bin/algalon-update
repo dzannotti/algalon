@@ -1,0 +1,205 @@
+#!/bin/bash
+# ============================================================================
+# Algalon System Update & Maintenance Script
+# Combines system updates with spring-clean maintenance tasks
+# ============================================================================
+
+set -euo pipefail
+trap 'echo ""; echo -e "\033[0;31mSomething went wrong during the update!\n\nPlease review the output above carefully, correct the error, and retry the update.\033[0m"; read -n 1 -s' ERR
+trap 'echo "[!] Script aborted by user."; exit 1' INT TERM
+
+# -------------------------------------
+# Detect AUR helper (yay or paru)
+# -------------------------------------
+
+if command -v yay &>/dev/null; then
+  AUR=yay
+elif command -v paru &>/dev/null; then
+  AUR=paru
+else
+  echo "Error: You need to install either 'yay' or 'paru' to use this script." >&2
+  exit 1
+fi
+
+# -------------------------------------
+# Set up logging and configuration
+# -------------------------------------
+
+LOG_DIR="$HOME/.local/var/log"
+mkdir -p "$LOG_DIR"
+LOG_FILE="$LOG_DIR/algalon-update-$(date +%F_%H-%M-%S).log"
+
+PACCACHE_RETAIN=2     # Keep only the latest 2 versions of packages
+CACHE_DAYS=30         # Delete ~/.cache files older than 30 days
+JOURNAL_RETAIN="7d"   # Keep only 7 days of system logs
+SNAPSHOT_RETAIN=10    # Keep only the 10 newest snapshots
+
+exec > >(tee -a "$LOG_FILE") 2>&1  # Everything goes to log file AND terminal
+
+# -------------------------------------
+# Helper functions
+# -------------------------------------
+
+confirm() {
+  read -r -p "${1:-Are you sure? [y/N]} " ans
+  [[ "$ans" =~ ^([yY][eE][sS]|[yY])$ ]]
+}
+
+announce() {
+  printf "\n\e[1;32m🔹 %s\e[0m\n" "$1"
+}
+
+step() {
+  printf "\n\e[1;34m==> %s\e[0m\n" "$1"
+}
+
+# -------------------------------------
+# Parse options
+# -------------------------------------
+
+DO_CLEAN=true  # Clean by default
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --no-clean) DO_CLEAN=false; shift ;;
+    -h|--help)
+      echo "Usage: $0 [--no-clean]"
+      echo "       --no-clean  Skip spring-clean maintenance tasks"
+      exit 0 ;;
+    *) echo "Unknown option: $1" ; exit 2 ;;
+  esac
+done
+
+announce "Algalon System Update Starting — Using AUR Helper: $AUR"
+echo "Log file saved to: $LOG_FILE"
+
+# -------------------------------------
+# 1: Create Snapper Snapshot
+# -------------------------------------
+
+if command -v snapper &>/dev/null; then
+  step "CREATING PRE-UPDATE SNAPSHOT"
+  sudo snapper -c root create --description "Before system update ($(date +%F))"
+  echo "✓ Snapshot created"
+
+  # Clean up old snapshots (keep only the newest N)
+  step "CLEANING UP OLD SNAPSHOTS (keeping $SNAPSHOT_RETAIN newest)"
+  mapfile -t OLD_SNAPSHOTS < <(sudo snapper -c root list | tail -n +4 | head -n -1 | awk '{print $1}' | sort -rn | tail -n +$((SNAPSHOT_RETAIN + 1)))
+  if ((${#OLD_SNAPSHOTS[@]})); then
+    echo "Deleting ${#OLD_SNAPSHOTS[@]} old snapshots..."
+    for snap in "${OLD_SNAPSHOTS[@]}"; do
+      sudo snapper -c root delete "$snap"
+      echo "  Deleted snapshot #$snap"
+    done
+    echo "✓ Old snapshots cleaned up"
+  else
+    echo "✓ No old snapshots to clean (${SNAPSHOT_RETAIN} or fewer exist)"
+  fi
+else
+  echo "⚠ Snapper not available, skipping snapshot"
+fi
+
+# -------------------------------------
+# 2: Update Algalon Configuration
+# -------------------------------------
+
+step "UPDATING ALGALON CONFIGURATION"
+cd ~/.local/share/algalon
+if git pull; then
+  echo "✓ Algalon config updated"
+else
+  echo "⚠ Failed to update Algalon config (continuing anyway)"
+fi
+
+# -------------------------------------
+# 3: System Package Update
+# -------------------------------------
+
+step "UPGRADING SYSTEM PACKAGES"
+echo "This will update all official and AUR packages."
+$AUR -Syu --noconfirm
+echo "✓ System packages updated"
+echo "NOTE: After upgrade, run: sudo pacdiff — to handle .pacnew files."
+
+# -------------------------------------
+# Optional: Spring-Clean Maintenance
+# -------------------------------------
+
+if $DO_CLEAN; then
+  announce "Running Spring-Clean Maintenance Tasks"
+
+  # Clean Pacman Cache
+  step "CLEANING PACKAGE CACHE"
+  current_cache=$(du -sh /var/cache/pacman/pkg | cut -f1)
+  echo "Current cache size: $current_cache"
+  echo "Cleaning old package cache (keeping last $PACCACHE_RETAIN versions)..."
+  sudo paccache -vrk $PACCACHE_RETAIN
+  sudo paccache -ruk0
+  new_cache=$(du -sh /var/cache/pacman/pkg | cut -f1)
+  echo "New cache size: $new_cache"
+
+  # Remove Orphaned Packages
+  step "REMOVING UNUSED (ORPHANED) PACKAGES"
+  mapfile -t ORPHANS < <($AUR -Qtdq)
+  if ((${#ORPHANS[@]})); then
+    echo "Found ${#ORPHANS[@]} orphaned packages:"
+    printf '%s\n' "${ORPHANS[@]}"
+    echo "Removing unneeded packages..."
+    sudo pacman -Rns --noconfirm "${ORPHANS[@]}"
+  else
+    echo "No orphaned packages found. All clean!"
+  fi
+
+  # Prune ~/.cache
+  step "CLEANING ~/.cache DIRECTORY"
+  before_cache=$(du -sh ~/.cache | cut -f1)
+  echo "Cache size before cleanup: $before_cache"
+  echo "Deleting files older than $CACHE_DAYS days from ~/.cache..."
+  find ~/.cache -type f -mtime +$CACHE_DAYS -print -delete
+  find ~/.cache -type d -empty -print -delete
+  after_cache=$(du -sh ~/.cache | cut -f1)
+  echo "Cache size after cleanup: $after_cache"
+
+  # Clean old system logs
+  step "VACUUMING SYSTEM LOGS (journald)"
+  before_logs=$(journalctl --disk-usage | awk '{print $NF}')
+  echo "Current journal size: $before_logs"
+  echo "Deleting logs older than $JOURNAL_RETAIN..."
+  sudo journalctl --rotate
+  sudo journalctl --vacuum-time=$JOURNAL_RETAIN
+  after_logs=$(journalctl --disk-usage | awk '{print $NF}')
+  echo "Journal size after vacuum: $after_logs"
+
+  # Check for Failed Services
+  step "CHECKING FOR FAILED SYSTEMD SERVICES"
+  if systemctl --failed --quiet; then
+    echo "✅ No failed services found."
+  else
+    echo "⚠️ Some services have failed:"
+    systemctl --failed --no-pager --plain
+  fi
+fi
+
+# -------------------------------------
+# 4: Check if Restart is Needed
+# -------------------------------------
+
+step "CHECKING IF REBOOT IS REQUIRED"
+
+# Check if running kernel version matches installed kernel
+if [ "$(uname -r | sed 's/-arch/\.arch/')" != "$(pacman -Q linux | awk '{print $2}')" ]; then
+  echo "⚠️ Linux kernel has been updated. Reboot required."
+  if command -v gum &>/dev/null; then
+    gum confirm "Reboot now?" && sudo reboot now
+  else
+    confirm "Reboot now? [y/N]" && sudo reboot now
+  fi
+else
+  echo "✅ No reboot required"
+fi
+
+# -------------------------------------
+# Finished
+# -------------------------------------
+
+announce "✅ Algalon Update Completed in ${SECONDS}s"
+echo "Full log saved to: $LOG_FILE"

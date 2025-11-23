@@ -1,0 +1,72 @@
+#!/bin/bash
+# Algalon Apply - Run individual setup components
+# Useful for applying specific configs on an existing system
+
+set -euo pipefail
+
+ALGALON_PATH="${ALGALON_PATH:-$HOME/.local/share/algalon}"
+
+show_help() {
+    cat << EOF
+Usage: algalon-apply [COMPONENT]
+
+Run individual algalon setup components.
+
+Available components:
+  dns-resolver      Configure systemd-resolved DNS
+  firewall          Set up UFW firewall
+  gnome-extensions  Install GNOME extensions
+  gdm-config        Configure GDM login screen
+  gpg-setup         Configure GPG for commit signing
+  all               Run all components (same as first-run.sh)
+
+Examples:
+  algalon-apply gpg-setup
+  algalon-apply firewall
+  algalon-apply all
+
+EOF
+}
+
+if [ $# -eq 0 ]; then
+    show_help
+    exit 1
+fi
+
+COMPONENT="$1"
+
+case "$COMPONENT" in
+    dns-resolver)
+        echo "→ Configuring DNS resolver..."
+        bash "$ALGALON_PATH/install/first-run/dns-resolver.sh"
+        ;;
+    firewall)
+        echo "→ Configuring firewall..."
+        bash "$ALGALON_PATH/install/first-run/firewall.sh"
+        ;;
+    gnome-extensions)
+        echo "→ Installing GNOME extensions..."
+        bash "$ALGALON_PATH/install/first-run/gnome-extensions.sh"
+        ;;
+    gdm-config)
+        echo "→ Configuring GDM login screen..."
+        bash "$ALGALON_PATH/install/first-run/gdm-config.sh"
+        ;;
+    gpg-setup)
+        echo "→ Setting up GPG for commit signing..."
+        bash "$ALGALON_PATH/install/first-run/gpg-setup.sh"
+        ;;
+    all)
+        echo "→ Running all setup components..."
+        bash "$ALGALON_PATH/first-run.sh"
+        ;;
+    -h|--help|help)
+        show_help
+        ;;
+    *)
+        echo "Error: Unknown component '$COMPONENT'"
+        echo
+        show_help
+        exit 1
+        ;;
+esac
