@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Exit immediately if a command exits with a non-zero status
-set -eEo pipefail
-
 # Prompt for sudo password once and cache credentials
 sudo -v
+
+# Note: Not using set -e because some hardware detection scripts
+# may fail gracefully (e.g., nvidia on non-nvidia systems)
 
 source "$ALGALON_INSTALL/preflight/all.sh"
 source "$ALGALON_INSTALL/packaging/all.sh"
