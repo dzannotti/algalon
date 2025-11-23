@@ -1,0 +1,66 @@
+# Algalon Homelab Reverse Proxy Configuration
+# Local DNS resolution via Pi-hole (point router DNS to algalon IP)
+
+# ============================================================================
+# MEDIA SERVICES
+# ============================================================================
+
+jellyfin.algalon.local {
+    reverse_proxy 172.39.0.10:8096
+}
+
+jellyseerr.algalon.local {
+    reverse_proxy 172.39.0.9:5055
+}
+
+# ============================================================================
+# MEDIA MANAGEMENT (*ARR STACK)
+# ============================================================================
+
+sonarr.algalon.local {
+    reverse_proxy 172.39.0.3:8989
+}
+
+radarr.algalon.local {
+    reverse_proxy 172.39.0.4:7878
+}
+
+lidarr.algalon.local {
+    reverse_proxy 172.39.0.5:8686
+}
+
+bazarr.algalon.local {
+    reverse_proxy 172.39.0.6:6767
+}
+
+# ============================================================================
+# DOWNLOAD CLIENTS (Through Gluetun VPN)
+# ============================================================================
+
+qbittorrent.algalon.local {
+    reverse_proxy 172.39.0.2:8080
+}
+
+nzbget.algalon.local {
+    reverse_proxy 172.39.0.2:6789
+}
+
+prowlarr.algalon.local {
+    reverse_proxy 172.39.0.2:9696
+}
+
+# ============================================================================
+# NETWORKING & UTILITIES
+# ============================================================================
+
+pihole.algalon.local {
+    reverse_proxy 172.39.0.15:80
+}
+
+syncthing.algalon.local {
+    reverse_proxy 172.39.0.11:8384
+}
+
+ntfy.algalon.local {
+    reverse_proxy 172.39.0.12:80
+}
