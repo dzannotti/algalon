@@ -12,62 +12,62 @@
 # ============================================================================
 
 :80 {
-    @jellyfin host jellyfin.algalon.com
+    @jellyfin host jellyfin.algalon.lan
     handle @jellyfin {
         reverse_proxy localhost:8096
     }
 
-    @jellyseerr host jellyseerr.algalon.com
+    @jellyseerr host jellyseerr.algalon.lan
     handle @jellyseerr {
         reverse_proxy localhost:5055
     }
 
-    @sonarr host sonarr.algalon.com
+    @sonarr host sonarr.algalon.lan
     handle @sonarr {
         reverse_proxy localhost:8989
     }
 
-    @radarr host radarr.algalon.com
+    @radarr host radarr.algalon.lan
     handle @radarr {
         reverse_proxy localhost:7878
     }
 
-    @lidarr host lidarr.algalon.com
+    @lidarr host lidarr.algalon.lan
     handle @lidarr {
         reverse_proxy localhost:8686
     }
 
-    @bazarr host bazarr.algalon.com
+    @bazarr host bazarr.algalon.lan
     handle @bazarr {
         reverse_proxy localhost:6767
     }
 
-    @qbittorrent host qbittorrent.algalon.com
+    @qbittorrent host qbittorrent.algalon.lan
     handle @qbittorrent {
         reverse_proxy localhost:8080
     }
 
-    @nzbget host nzbget.algalon.com
+    @nzbget host nzbget.algalon.lan
     handle @nzbget {
         reverse_proxy localhost:6789
     }
 
-    @prowlarr host prowlarr.algalon.com
+    @prowlarr host prowlarr.algalon.lan
     handle @prowlarr {
         reverse_proxy localhost:9696
     }
 
-    @pihole host pihole.algalon.com
+    @pihole host pihole.algalon.lan
     handle @pihole {
         reverse_proxy localhost:8082
     }
 
-    @syncthing host syncthing.algalon.com
+    @syncthing host syncthing.algalon.lan
     handle @syncthing {
         reverse_proxy localhost:8384
     }
 
-    @ntfy host ntfy.algalon.com
+    @ntfy host ntfy.algalon.lan
     handle @ntfy {
         reverse_proxy localhost:8585
     }
