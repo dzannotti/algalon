@@ -1,7 +1,0 @@
-#!/bin/bash
-
-# Launch a command in a floating terminal with Algalon branding
-# Usage: algalon-launch-terminal <command>
-
-cmd="$*"
-exec setsid ghostty --window-width=80 --window-height=40 --class=Algalon --title=Algalon -e bash -c "algalon-show-logo; $cmd; algalon-show-done"

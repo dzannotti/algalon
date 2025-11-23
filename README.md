@@ -1,36 +1,55 @@
 # Algalon
 
-Opinionated Arch Linux configuration focused on GNOME desktop and modern development workflows.
+Opinionated Arch Linux home server configuration for media streaming and NAS.
+
+**Status:** 🚧 In active development - forked from [mimiron](https://github.com/dzannotti/mimiron) desktop setup
+
+## What This Is
+
+A repeatable, version-controlled setup that transforms a bare Arch Linux installation into a fully-configured home server focused on:
+
+- **Media Streaming** - Plex/Jellyfin for movies, TV shows, music
+- **NAS** - Network-attached storage with SMB/NFS shares
+- **Download Management** - Automated media acquisition and organization
+- **Remote Access** - Secure access from anywhere
+- **Monitoring** - System health, disk usage, service status
+
+## Planned Components
+
+### Media Stack
+- [ ] **Plex/Jellyfin** - Media server
+- [ ] **Sonarr/Radarr** - TV/Movie automation
+- [ ] **Prowlarr** - Indexer management
+- [ ] **Transmission/qBittorrent** - Download client
+- [ ] **Bazarr** - Subtitle management
+
+### Storage & File Management
+- [ ] **Samba** - Windows/macOS network shares
+- [ ] **NFS** - Unix/Linux network shares
+- [ ] **Cockpit** - Web-based system management
+- [ ] **ZFS/BTRFS** - Advanced filesystem with snapshots (TBD)
+
+### System Services
+- [ ] **Docker/Podman** - Container runtime for services
+- [ ] **Tailscale/WireGuard** - VPN for remote access
+- [ ] **Nginx** - Reverse proxy
+- [ ] **Fail2ban** - Intrusion prevention
+- [ ] **UFW** - Firewall
+
+### Monitoring & Maintenance
+- [ ] **Prometheus/Grafana** - Metrics and dashboards
+- [ ] **Netdata** - Real-time monitoring
+- [ ] **Smartmontools** - Disk health monitoring
+- [ ] **Snapper** - Filesystem snapshots
 
 ## Installation
 
 ### Prerequisites
-Fresh Arch Linux installation with:
-- Base packages (default)
+- Fresh Arch Linux installation
+- Base packages installed
 - User account created (non-root)
-- `networkmanager` installed
 - Working internet connection
-
-### Connect to Internet (if WiFi)
-
-After fresh Arch install, you'll be in a TTY terminal. Connect to WiFi:
-
-```bash
-# Start NetworkManager service
-sudo systemctl start NetworkManager
-
-# Connect to WiFi using nmtui (Text UI)
-nmtui
-
-# Or use nmcli (command line)
-nmcli device wifi list
-nmcli device wifi connect "YOUR_SSID" password "YOUR_PASSWORD"
-
-# Verify connection
-ping -c 3 archlinux.org
-```
-
-**Ethernet:** Should work automatically if NetworkManager is running.
+- Sufficient storage for media (recommend 4TB+)
 
 ### Quick Start
 
@@ -42,115 +61,57 @@ git clone https://github.com/dzannotti/algalon.git ~/.local/share/algalon
 source ~/.local/share/algalon/boot.sh
 ```
 
-After installation completes, reboot into GNOME.
-
-### Post-Install (First boot into GNOME)
-
-After logging into GNOME for the first time, run:
+### Post-Install
 
 ```bash
-# Run first-boot configuration
+# Run post-installation setup
 ~/.local/share/algalon/first-run.sh
 ```
 
-This will:
-- Configure DNS resolver
-- Set up firewall
-- Install and enable GNOME extensions
-- Set up GPG key for commit signing
-- Show welcome notifications
-
-You may need to restart GNOME Shell (Alt+F2, type 'r') or log out/in for all changes to take effect.
-
 ### Updating Configuration
 
-To update your Algalon configuration after changes to the repo:
-
 ```bash
-# Pull latest changes and re-apply dotfiles/config
+# Pull latest changes and re-apply configuration
 algalon-update
 ```
 
-This will:
-- Pull latest changes from git
-- Re-copy all dotfiles to ~/.config
-- Update system defaults (zsh, gpg)
-- Preserve your local customizations
-- Automatically clean up old snapshots (keeps 10 newest)
+## Current State (Desktop Remnants)
 
-### Running Individual Setup Components
+This repo is currently being transitioned from a GNOME desktop setup to a headless home server. The following desktop-specific components will be removed:
 
-If you need to re-run a specific setup component (e.g., after importing GPG keys):
+- GNOME desktop environment and extensions
+- Desktop applications (VSCode, Chrome, etc.)
+- Desktop theming and wallpapers
+- GUI-specific keybindings
+- Development tools (unless server-relevant)
 
-```bash
-# Run a specific component
-algalon-apply gpg-setup
-
-# Available components:
-algalon-apply dns-resolver      # Configure systemd-resolved DNS
-algalon-apply firewall          # Set up UFW firewall
-algalon-apply gnome-extensions  # Install GNOME extensions
-algalon-apply gdm-config        # Configure GDM login screen
-algalon-apply gpg-setup         # Configure GPG for commit signing
-algalon-apply all               # Run all components (same as first-run.sh)
-```
-
-This is useful when:
-- Testing individual setup scripts
-- Applying specific configs without re-running entire first-run
-- Setting up GPG after importing your keys on a fresh install
+Core infrastructure being retained:
+- Package management approach
+- Configuration management patterns
+- Update mechanisms
+- System hardening (firewall, SSH)
+- Snapshot/rollback capability
 
 ## Philosophy
 
-Inspired by [omarchy](https://github.com/basecamp/omarchy)'s principles but tailored for GNOME users who want:
-- Ubuntu-quality defaults and polish on Arch
-- Minimal configuration overhead (no tiling WM)
-- Quick recovery from system issues
-- Repeatable, version-controlled setup
+- **Headless-first** - No GUI dependencies, web UIs for management
+- **Declarative** - Everything in version control
+- **Idempotent** - Safe to re-run scripts
+- **Minimal** - Only install what's needed
+- **Recoverable** - Snapshots for rollback
+- **Secure by default** - Firewall, fail2ban, minimal attack surface
 
-Perfect for ultrawide monitor users who prefer traditional desktop paradigms.
+## Roadmap
 
-## What's Included
-
-### Desktop Environment
-- **GNOME** - Full desktop environment with Ubuntu-like defaults
-- **Catppuccin theme** - Consistent theming across all applications
-
-### Development Tools
-- **VSCode** - Primary editor with extensions and settings
-- **Neovim** - Terminal editor with full configuration
-- **Development runtimes** - Installed via native packages
-  - Node.js & npm & pnpm
-  - Bun
-  - Go
-  - Rust & Cargo
-
-### Configuration
-- Shell configuration and aliases
-- Git configuration
-- Application preferences and dotfiles
-
-### Keyboard Shortcuts
-
-Global run-or-raise shortcuts for quick application switching (via [run-or-raise](https://github.com/CZ-NIC/run-or-raise) GNOME extension):
-
-- **Ctrl+Alt+J** - Chrome (focus or launch)
-- **Ctrl+Alt+H** - Obsidian (focus or launch)
-- **Ctrl+Alt+K** - VSCode (focus or launch)
-- **Ctrl+Alt+L** - Ghostty terminal (focus or launch)
-- **Ctrl+Alt+;** - Ferdium (focus or launch)
-
-Configuration file: `~/.config/run-or-raise/shortcuts.conf`
-
-## Goals
-
-Transform a minimal Arch installation into a fully configured development environment with:
-- Production-ready tooling
-- Consistent theming
-- Sensible defaults
-- Zero manual configuration steps
+1. **Phase 1** - Remove desktop components, establish headless base
+2. **Phase 2** - Add Docker/Podman and container orchestration
+3. **Phase 3** - Deploy media stack (Plex + *arr apps)
+4. **Phase 4** - Configure storage and network shares
+5. **Phase 5** - Add monitoring and alerting
+6. **Phase 6** - Remote access and backup strategies
 
 ## Notes
 
-This is a personal configuration primarily for my own use. It's public for my own reference and in case the approach is useful to others, but it's not designed as a general-purpose installer.
+Personal home server configuration. Public for my own reference and version control. Not designed as a general-purpose installer, but feel free to steal ideas.
 
+If you came here looking for the desktop setup, see [mimiron](https://github.com/dzannotti/mimiron).

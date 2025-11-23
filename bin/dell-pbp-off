@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-# Disable PBP/PIP mode on Dell ultrawide monitor (return to single mode)
-/home/dzannotti/.local/share/algalon/bin/dell-monitor single_mode
-# Update state file for toggle script
-mkdir -p "$HOME/.cache"
-echo "off" > "$HOME/.cache/algalon-pbp-state"
