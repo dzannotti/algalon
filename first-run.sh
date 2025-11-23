@@ -8,7 +8,7 @@ ansi_art='
 
 clear
 echo -e "\n$ansi_art\n"
-echo "Running first-boot configuration..."
+echo "Running post-installation configuration..."
 echo
 
 ALGALON_PATH="$HOME/.local/share/algalon"
@@ -22,27 +22,21 @@ echo "→ Configuring firewall..."
 bash "$ALGALON_PATH/install/first-run/firewall.sh"
 
 echo
-echo "→ Installing GNOME extensions..."
-bash "$ALGALON_PATH/install/first-run/gnome-extensions.sh"
-
-echo
-echo "→ Configuring GDM login screen..."
-bash "$ALGALON_PATH/install/first-run/gdm-config.sh"
-
-echo
 echo "→ Setting up GPG for commit signing..."
 bash "$ALGALON_PATH/install/first-run/gpg-setup.sh"
 
 echo
-echo "→ Showing welcome message..."
-bash "$ALGALON_PATH/install/first-run/welcome.sh"
-
-echo
 echo "╔═══════════════════════════════════════════════════════════════════╗"
-echo "║                   FIRST-RUN COMPLETE                          ║"
+echo "║                   POST-INSTALL COMPLETE                          ║"
 echo "╚═══════════════════════════════════════════════════════════════════╝"
 echo
-echo "You may need to:"
-echo "  - Restart GNOME Shell (Alt+F2, type 'r', press Enter)"
-echo "  - Or log out and back in for all changes to take effect"
+echo "Server configured with:"
+echo "  ✓ DNS resolver (systemd-resolved)"
+echo "  ✓ Firewall (UFW with SSH, Samba, NFS, Tailscale)"
+echo "  ✓ GPG commit signing"
+echo
+echo "Next steps:"
+echo "  - Configure Tailscale: sudo tailscale up"
+echo "  - Set up Docker containers for media stack"
+echo "  - Configure Samba shares"
 echo
