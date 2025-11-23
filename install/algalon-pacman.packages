@@ -1,25 +1,27 @@
 # Algalon official repository packages (installed via pacman)
+# Headless home server - Docker media stack + NAS + Tailscale
 
-# GNOME Desktop
-gnome-shell
-gnome-control-center
-gnome-session
-gnome-settings-daemon
-gnome-tweaks
-gnome-terminal
-gnome-backgrounds
-gnome-menus
-gnome-shell-extensions
-dconf-editor
-xdg-user-dirs-gtk
-gdm
-gnome-themes-extra
-sassc
+# Container Runtime
+docker
+docker-compose
+docker-buildx
+
+# Network File Sharing
+samba
+nfs-utils
+avahi
+nss-mdns
+
+# VPN & Remote Access
+tailscale
+openssh
+wireguard-tools
 
 # Development Tools
 neovim
 lazygit
 github-cli
+git
 clang
 tmux
 python-pipx
@@ -30,7 +32,6 @@ npm
 pnpm
 
 # Shell & Terminal
-ghostty
 starship
 zsh
 zsh-autosuggestions
@@ -44,9 +45,7 @@ eza
 fd
 fzf
 ripgrep
-fastfetch
 btop
-conky
 dust
 ncdu
 gum
@@ -58,129 +57,72 @@ wget
 curl
 stow
 nano
-wl-clipboard
-wtype
 aria2
 bc
-7zip
-plocate
-xdotool
-wmctrl
-
-# File Management & Utilities
-nautilus
-gnome-disk-utility
-gnome-calculator
-gnome-system-monitor
-gnome-characters
-gnome-logs
-gnome-weather
-gnome-clocks
-gnome-font-viewer
-gnome-usage
-baobab
-sushi
-evince
-file-roller
-loupe
 p7zip
 unrar
+7zip
+plocate
 
-# Fonts
-noto-fonts
-noto-fonts-cjk
-noto-fonts-emoji
-noto-fonts-extra
-ttf-liberation
-ttf-dejavu
-adobe-source-sans-fonts
-ttf-cascadia-mono-nerd
-ttf-jetbrains-mono-nerd
-ttf-meslo-nerd
-ttf-firacode-nerd
-nerd-fonts-inter
-
-# System
+# System Management
 pacman-contrib
 snapper
-avahi
-nss-mdns
-cups
-cups-browsed
-cups-filters
-cups-pdf
-system-config-printer
-power-profiles-daemon
-polkit-gnome
-gnome-keyring
-libsecret
-networkmanager
-openssh
+reflector
 man-db
 man-pages
-reflector
-alsa-utils
-dosfstools
-ntfs-3g
+networkmanager
+ufw
+fwupd
 lm_sensors
 libnotify
-pavucontrol
-lxappearance
-qt5-wayland
-qt6-wayland
-qt6-svg
-xdg-desktop-portal
-xdg-desktop-portal-gnome
-xdg-desktop-portal-gtk
+pciutils
+
+# Storage & Filesystems
+dosfstools
+ntfs-3g
+exfatprogs
+gvfs
+gvfs-mtp
+gvfs-nfs
+gvfs-smb
+inetutils
+
+# Audio Stack (for media transcoding)
 pipewire
 pipewire-alsa
 pipewire-pulse
 pipewire-jack
 gst-plugin-pipewire
 wireplumber
+alsa-utils
+
+# Bluetooth
 bluez
 bluez-utils
-ufw
-gufw
-fwupd
-gnome-software
-mesa-utils
-vulkan-tools
-amd-ucode
-linux-headers
-dkms
-ddcutil
-i2c-tools
-colord
-pciutils
-efibootmgr
-mkinitcpio
 
-# Network & File Systems
-gvfs
-gvfs-mtp
-gvfs-nfs
-gvfs-smb
-gvfs-gphoto2
-gvfs-afc
-gvfs-goa
-gvfs-google
-exfatprogs
-inetutils
-
-# Media
+# Media Processing (for Plex/Jellyfin transcoding)
 mpv
-mpv-mpris
-ffmpegthumbnailer
-imagemagick
 ffmpeg
+imagemagick
+ffmpegthumbnailer
 gst-plugins-good
 gst-plugins-bad
 gst-plugins-ugly
 gst-libav
 
-# Applications
-bitwarden
-discord
-gamemode
-obsidian
+# Fonts (minimal)
+noto-fonts
+noto-fonts-emoji
+ttf-liberation
+ttf-dejavu
+
+# Boot & Hardware
+amd-ucode
+linux-headers
+dkms
+efibootmgr
+mkinitcpio
+
+# Security
+libsecret
+gnome-keyring
