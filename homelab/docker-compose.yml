@@ -37,6 +37,7 @@ services:
       servarrnetwork:
         ipv4_address: 172.39.0.2
     ports:
+      - 8000:8000 # gluetun control server
       - 8080:8080 # qbittorrent
       - 6881:6881 # qbittorrent torrent port
       - 6881:6881/udp
@@ -51,6 +52,8 @@ services:
       - OPENVPN_PASSWORD=${EXPRESSVPN_PASSWORD}
       - SERVER_COUNTRIES=${EXPRESSVPN_COUNTRY}
       - FIREWALL_VPN_INPUT_PORTS=${FIREWALL_VPN_INPUT_PORTS}
+      - HTTPPROXY=on
+      - HTTPPROXY_LOG=on
       - TZ=${TZ}
     healthcheck:
       test: ping -c 1 www.google.com || exit 1
