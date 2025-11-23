@@ -71,6 +71,7 @@ services:
       - WEBPASSWORD=${PIHOLE_PASSWORD}
       - PIHOLE_DNS_=1.1.1.1;1.0.0.1 # Cloudflare DNS
       - DNSMASQ_LISTENING=all
+      - DNSMASQ_USER=root
     volumes:
       - ./pihole/etc-pihole:/etc/pihole
       - ./pihole/etc-dnsmasq.d:/etc/dnsmasq.d
