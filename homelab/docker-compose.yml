@@ -53,7 +53,8 @@ services:
       - SERVER_COUNTRIES=${EXPRESSVPN_COUNTRY}
       - FIREWALL_VPN_INPUT_PORTS=${FIREWALL_VPN_INPUT_PORTS}
       - HTTPPROXY=on
-      - HTTPPROXY_LOG=on
+      - HTTPPROXY_LISTENING_ADDRESS=:8888
+      - HTTP_CONTROL_SERVER_ADDRESS=:8000
       - TZ=${TZ}
     healthcheck:
       test: ping -c 1 www.google.com || exit 1
