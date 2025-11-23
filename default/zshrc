@@ -3,7 +3,7 @@ export PATH=$PATH:~/.local/bin:~/.local/share/algalon/bin:~/.cargo/bin
 
 # Source zsh configuration
 source ~/.config/zsh/zshrc
-source ~/.config/zsh/plugins
+# Note: plugins loaded via system packages in zshrc, not Zinit
 source ~/.config/zsh/aliases
 
 # Initialize zoxide

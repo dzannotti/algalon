@@ -13,11 +13,13 @@ unset zle_bracketed_paste
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-# Explicit key bindings (some terminals need these)
-bindkey "\e[3~" delete-char
-bindkey "\e[H"  beginning-of-line
-bindkey "\e[F"  end-of-line
-bindkey "\e[27;2;13~" self-insert-unmeta  # Shift+Enter for newline without executing
+# Explicit key bindings (fix backspace and other keys)
+bindkey "^?" backward-delete-char  # Backspace
+bindkey "^H" backward-delete-char  # Backspace (alternative)
+bindkey "\e[3~" delete-char        # Delete
+bindkey "\e[H"  beginning-of-line  # Home
+bindkey "\e[F"  end-of-line        # End
+bindkey "\e[27;2;13~" self-insert-unmeta  # Shift+Enter for newline
 
 # fzf integration for better Ctrl+R history search
 source /usr/share/fzf/key-bindings.zsh
