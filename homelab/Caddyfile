@@ -2,16 +2,15 @@
 # Local DNS resolution via Pi-hole (point router DNS to algalon IP)
 
 {
-    auto_https off
-    http_port 80
-    https_port 443
+    # Use internal CA for self-signed certs on local domains
+    auto_https internal_issuer
 }
 
 # ============================================================================
 # MEDIA SERVICES
 # ============================================================================
 
-:80 {
+*.algalon.lan {
     @jellyfin host jellyfin.algalon.lan
     handle @jellyfin {
         reverse_proxy localhost:8096
