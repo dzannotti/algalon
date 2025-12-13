@@ -8,7 +8,8 @@
 # 4. Run: docker-compose up -d
 #
 # Access after Pi-hole DNS is configured (point router DNS to algalon IP):
-# - jellyfin.algalon.local - Media streaming
+# - jellyfin.algalon.local - Media streaming (Jellyfin)
+# - plex.algalon.local - Media streaming (Plex)
 # - jellyseerr.algalon.local - Request movies/shows
 # - radarr.algalon.local, sonarr.algalon.local, etc.
 # - pihole.algalon.local - Ad blocking admin
@@ -22,6 +23,21 @@ networks:
         - subnet: 172.39.0.0/24
 
 services:
+  # ============================================================================
+  # REVERSE PROXY
+  # ============================================================================
+
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    network_mode: host
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./caddy_data:/data
+      - ./caddy_config:/config
+      - ./www:/srv/www:ro
+    restart: unless-stopped
+
   # ============================================================================
   # VPN & NETWORKING
   # ============================================================================
@@ -41,11 +57,13 @@ services:
       - 8080:8080 # qbittorrent
       - 6881:6881 # qbittorrent torrent port
       - 6881:6881/udp
-      - 6789:6789 # nzbget
+      # - 6789:6789 # nzbget
       - 9696:9696 # prowlarr
     volumes:
       - ./gluetun:/gluetun
     environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
       - VPN_SERVICE_PROVIDER=expressvpn
       - VPN_TYPE=openvpn
       - OPENVPN_USER=${EXPRESSVPN_USER}
@@ -63,13 +81,36 @@ services:
       retries: 5
     restart: unless-stopped
 
+  # tailscale:
+  #   image: tailscale/tailscale:latest
+  #   container_name: tailscale
+  #   hostname: algalon
+  #   network_mode: host
+  #   cap_add:
+  #     - NET_ADMIN
+  #     - SYS_MODULE
+  #   devices:
+  #     - /dev/net/tun:/dev/net/tun
+  #   volumes:
+  #     - ./tailscale/state:/var/lib/tailscale
+  #     - /dev/net/tun:/dev/net/tun
+  #     - /lib/modules:/lib/modules:ro
+  #   environment:
+  #     - TS_AUTHKEY=${TAILSCALE_AUTHKEY}
+  #     - TS_STATE_DIR=/var/lib/tailscale
+  #     - TS_USERSPACE=false
+  #     - TS_EXTRA_ARGS=--advertise-exit-node --advertise-routes=172.39.0.0/24,192.168.1.0/24
+  #   restart: unless-stopped
+
   pihole:
     image: pihole/pihole:latest
     container_name: pihole
     environment:
       - TZ=${TZ}
-      - WEBPASSWORD=${PIHOLE_PASSWORD}
-      - PIHOLE_DNS_=1.1.1.1;1.0.0.1 # Cloudflare DNS
+      - PIHOLE_UID=${PUID}
+      - PIHOLE_GID=${PGID}
+      - FTLCONF_webserver_api_password=${PIHOLE_PASSWORD}
+      - FTLCONF_dns_upstreams=1.1.1.1;1.0.0.1
       - DNSMASQ_LISTENING=all
     volumes:
       - ./pihole/etc-pihole:/etc/pihole
@@ -81,16 +122,6 @@ services:
     networks:
       servarrnetwork:
         ipv4_address: 172.39.0.15
-    restart: unless-stopped
-
-  caddy:
-    image: caddy:latest
-    container_name: caddy
-    network_mode: host
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - ./caddy_data:/data
-      - ./caddy_config:/config
     restart: unless-stopped
 
   # ============================================================================
@@ -136,22 +167,22 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: always
 
-  nzbget:
-    image: lscr.io/linuxserver/nzbget:latest
-    container_name: nzbget
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-    volumes:
-      - ./nzbget:/config
-      - /data:/data
-    depends_on:
-      gluetun:
-        condition: service_healthy
-        restart: true
-    network_mode: service:gluetun
-    restart: unless-stopped
+  # nzbget:
+  #   image: lscr.io/linuxserver/nzbget:latest
+  #   container_name: nzbget
+  #   environment:
+  #     - PUID=${PUID}
+  #     - PGID=${PGID}
+  #     - TZ=${TZ}
+  #   volumes:
+  #     - ./nzbget:/config
+  #     - /data:/data
+  #   depends_on:
+  #     gluetun:
+  #       condition: service_healthy
+  #       restart: true
+  #   network_mode: service:gluetun
+  #   restart: unless-stopped
 
   # ============================================================================
   # INDEXERS (Through VPN)
@@ -176,6 +207,7 @@ services:
   flaresolverr:
     image: ghcr.io/flaresolverr/flaresolverr:latest
     container_name: flaresolverr
+    user: "${PUID}:${PGID}"
     environment:
       - TZ=${TZ}
     ports:
@@ -257,12 +289,43 @@ services:
         ipv4_address: 172.39.0.6
     restart: unless-stopped
 
+  tdarr:
+    image: ghcr.io/haveagitgat/tdarr:latest
+    container_name: tdarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - UMASK_SET=002
+      - serverIP=0.0.0.0
+      - serverPort=8266
+      - webUIPort=8265
+      - internalNode=true
+      - inContainer=true
+      - ffmpegVersion=6
+      - nodeName=algalon
+    volumes:
+      - ./tdarr/server:/app/server
+      - ./tdarr/configs:/app/configs
+      - ./tdarr/logs:/app/logs
+      - /data/media:/media
+      - /data/tdarr_transcode_cache:/temp
+    ports:
+      - 8265:8265
+      - 8266:8266
+    devices:
+      - /dev/dri:/dev/dri
+    networks:
+      servarrnetwork:
+        ipv4_address: 172.39.0.20
+    restart: unless-stopped
+
   # ============================================================================
   # MEDIA STREAMING
   # ============================================================================
 
   jellyfin:
-    image: jellyfin/jellyfin:latest
+    image: lscr.io/linuxserver/jellyfin:latest
     container_name: jellyfin
     environment:
       - PUID=${PUID}
@@ -277,9 +340,43 @@ services:
       - 8920:8920 # HTTPS
       - 7359:7359/udp # Service discovery
       - 1900:1900/udp # Service discovery
+    devices:
+      - /dev/dri:/dev/dri  # AMD VA-API hardware acceleration
     networks:
       servarrnetwork:
         ipv4_address: 172.39.0.10
+    restart: unless-stopped
+
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    hostname: algalon
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - VERSION=docker
+      - PLEX_CLAIM=${PLEX_CLAIM}
+      - ALLOWED_NETWORKS=192.168.1.0/24,172.39.0.0/24
+      - ADVERTISE_IP=http://192.168.1.100:32400/,https://plex.algalon.local:443/
+    volumes:
+      - ./plex/config:/config
+      - /data/media:/media:ro
+      - ./plex/transcode:/transcode
+    ports:
+      - 32400:32400 # Plex web interface
+      - 3005:3005 # Plex Companion
+      - 8324:8324 # Roku
+      - 32410:32410/udp # Network discovery
+      - 32412:32412/udp # Network discovery
+      - 32413:32413/udp # Network discovery
+      - 32414:32414/udp # Network discovery
+      - 32469:32469 # DLNA
+    devices:
+      - /dev/dri:/dev/dri  # AMD VA-API hardware acceleration
+    networks:
+      servarrnetwork:
+        ipv4_address: 172.39.0.14
     restart: unless-stopped
 
   jellyseerr:
@@ -298,7 +395,7 @@ services:
     restart: unless-stopped
 
   # ============================================================================
-  # FILE SYNC & NAS
+  # FILE SYNC & NAS (using native samba instead)
   # ============================================================================
 
   # syncthing:
@@ -322,39 +419,134 @@ services:
   #       ipv4_address: 172.39.0.11
   #   restart: unless-stopped
 
-  samba:
-    image: dperson/samba:latest
-    container_name: samba
+  # ============================================================================
+  # GAMES
+  # ============================================================================
+
+  gamevault:
+    image: phalcode/gamevault-backend:latest
+    container_name: gamevault
     environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
       - TZ=${TZ}
-      - USERID=${PUID}
-      - GROUPID=${PGID}
-    ports:
-      - 139:139
-      - 445:445
+      - DB_SYSTEM=SQLITE
+      - SERVER_REGISTRATION_DISABLED=false
+      - SERVER_ACCOUNT_ACTIVATION_DISABLED=true
+      - USERS_REQUIRE_EMAIL=false
+      - USERS_REQUIRE_FIRST_NAME=false
+      - USERS_REQUIRE_LAST_NAME=false
+      # IGDB metadata
+      - METADATA_IGDB_CLIENT_ID=${IGDB_CLIENT_ID}
+      - METADATA_IGDB_CLIENT_SECRET=${IGDB_CLIENT_SECRET}
     volumes:
-      - /data/media:/media
-      - /data/private:/private
-      - /data/public:/public
-      - /data/downloads:/downloads
-    command: >
-      -u "${SAMBA_USER};${SAMBA_PASSWORD};${PUID}"
-      -s "media;/media;yes;no;no;${SAMBA_USER};${SAMBA_USER};${SAMBA_USER};Media Library"
-      -s "downloads;/downloads;yes;no;no;${SAMBA_USER};${SAMBA_USER};${SAMBA_USER};Downloads"
-      -s "private;/private;yes;no;no;${SAMBA_USER};${SAMBA_USER};${SAMBA_USER};Private Files"
-      -s "public;/public;yes;no;yes;all;all;all;Public Share"
+      - ./gamevault/db:/db
+      - ./gamevault/config:/config
+      - ./gamevault/data:/data
+      - /data/games:/files:ro
+    ports:
+      - 8087:8080
     networks:
       servarrnetwork:
-        ipv4_address: 172.39.0.13
+        ipv4_address: 172.39.0.21
+    restart: unless-stopped
+
+  gameyfin:
+    image: ghcr.io/gameyfin/gameyfin:2
+    container_name: gameyfin
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - APP_KEY=${GAMEYFIN_APP_KEY}
+      - APP_URL=https://gameyfin.algalon.local
+    volumes:
+      - ./gameyfin/db:/opt/gameyfin/db
+      - ./gameyfin/data:/opt/gameyfin/data
+      - ./gameyfin/logs:/opt/gameyfin/logs
+      - /data/games:/library:ro
+    ports:
+      - 8088:8080
+    networks:
+      servarrnetwork:
+        ipv4_address: 172.39.0.22
     restart: unless-stopped
 
   # ============================================================================
   # UTILITIES
   # ============================================================================
 
+  homarr:
+    image: ghcr.io/homarr-labs/homarr:latest
+    container_name: homarr
+    environment:
+      - TZ=${TZ}
+      - SECRET_ENCRYPTION_KEY=${HOMARR_SECRET_KEY}
+    volumes:
+      - ./homarr/appdata:/appdata
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - 7575:7575
+    networks:
+      servarrnetwork:
+        ipv4_address: 172.39.0.17
+    restart: unless-stopped
+
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower
+    environment:
+      - TZ=${TZ}
+      - DOCKER_API_VERSION=1.44
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_SCHEDULE=0 0 4 * * *
+      - WATCHTOWER_NOTIFICATIONS=shoutrrr
+      - WATCHTOWER_NOTIFICATION_URL=${WATCHTOWER_NOTIFICATION_URL:-}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
+  # recyclarr:
+  #   image: ghcr.io/recyclarr/recyclarr:latest
+  #   container_name: recyclarr
+  #   user: "${PUID}:${PGID}"
+  #   environment:
+  #     - TZ=${TZ}
+  #   volumes:
+  #     - ./recyclarr:/config
+  #   networks:
+  #     servarrnetwork:
+  #       ipv4_address: 172.39.0.18
+  #   restart: unless-stopped
+
+  # unpackerr:
+  #   image: golift/unpackerr:latest
+  #   container_name: unpackerr
+  #   user: "${PUID}:${PGID}"
+  #   environment:
+  #     - TZ=${TZ}
+  #     # Sonarr
+  #     - UN_SONARR_0_URL=http://172.39.0.3:8989
+  #     - UN_SONARR_0_API_KEY=${SONARR_API_KEY:-}
+  #     - UN_SONARR_0_PATHS_0=/data/downloads/complete
+  #     # Radarr
+  #     - UN_RADARR_0_URL=http://172.39.0.4:7878
+  #     - UN_RADARR_0_API_KEY=${RADARR_API_KEY:-}
+  #     - UN_RADARR_0_PATHS_0=/data/downloads/complete
+  #     # Lidarr
+  #     - UN_LIDARR_0_URL=http://172.39.0.5:8686
+  #     - UN_LIDARR_0_API_KEY=${LIDARR_API_KEY:-}
+  #     - UN_LIDARR_0_PATHS_0=/data/downloads/complete
+  #   volumes:
+  #     - /data/downloads:/data/downloads
+  #   networks:
+  #     servarrnetwork:
+  #       ipv4_address: 172.39.0.19
+  #   restart: unless-stopped
+
   ntfy:
     image: binwiederhier/ntfy:latest
     container_name: ntfy
+    user: "${PUID}:${PGID}"
     command: serve
     environment:
       - TZ=${TZ}

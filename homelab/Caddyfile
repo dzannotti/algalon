@@ -1,72 +1,139 @@
 # Algalon Homelab Reverse Proxy Configuration
-# Local DNS resolution via Pi-hole (point router DNS to algalon IP)
 
 {
-    auto_https off
+    local_certs
+    skip_install_trust
+}
+
+# ============================================================================
+# MAIN DASHBOARD
+# ============================================================================
+
+algalon.local, www.algalon.local {
+    tls internal
+    root * /srv/www
+    file_server
+}
+
+cockpit.algalon.local {
+    tls internal
+    reverse_proxy localhost:9090 {
+        transport http {
+            tls_insecure_skip_verify
+        }
+    }
 }
 
 # ============================================================================
 # MEDIA SERVICES
 # ============================================================================
 
+jellyfin.algalon.local {
+    tls internal
+    reverse_proxy localhost:8096
+}
+
+plex.algalon.local {
+    tls internal
+    reverse_proxy localhost:32400
+}
+
+jellyseerr.algalon.local {
+    tls internal
+    reverse_proxy localhost:5055
+}
+
+# ============================================================================
+# MEDIA MANAGEMENT (*ARR STACK)
+# ============================================================================
+
+sonarr.algalon.local {
+    tls internal
+    reverse_proxy localhost:8989
+}
+
+radarr.algalon.local {
+    tls internal
+    reverse_proxy localhost:7878
+}
+
+lidarr.algalon.local {
+    tls internal
+    reverse_proxy localhost:8686
+}
+
+bazarr.algalon.local {
+    tls internal
+    reverse_proxy localhost:6767
+}
+
+tdarr.algalon.local {
+    tls internal
+    reverse_proxy localhost:8265
+}
+
+# ============================================================================
+# DOWNLOAD CLIENTS & INDEXERS
+# ============================================================================
+
+qbittorrent.algalon.local {
+    tls internal
+    reverse_proxy localhost:8080 {
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Real-IP {remote_host}
+    }
+}
+
+# nzbget.algalon.local {
+#     tls internal
+#     reverse_proxy localhost:6789
+# }
+
+prowlarr.algalon.local {
+    tls internal
+    reverse_proxy localhost:9696
+}
+
+# ============================================================================
+# NETWORKING & UTILITIES
+# ============================================================================
+
+pihole.algalon.local {
+    tls internal
+    redir / /admin permanent
+    reverse_proxy localhost:8082
+}
+
+syncthing.algalon.local {
+    tls internal
+    reverse_proxy localhost:8384
+}
+
+ntfy.algalon.local {
+    tls internal
+    reverse_proxy localhost:8585
+}
+
+gamevault.algalon.local {
+    tls internal
+    reverse_proxy localhost:8087
+}
+
+gameyfin.algalon.local {
+    tls internal
+    reverse_proxy localhost:8088
+}
+
+homarr.algalon.local {
+    tls internal
+    reverse_proxy localhost:7575
+}
+
+# ============================================================================
+# FALLBACK - Direct IP access (HTTP)
+# ============================================================================
+
 :80 {
-    @jellyfin host jellyfin.algalon.local
-    handle @jellyfin {
-        reverse_proxy localhost:8096
-    }
-
-    @jellyseerr host jellyseerr.algalon.local
-    handle @jellyseerr {
-        reverse_proxy localhost:5055
-    }
-
-    @sonarr host sonarr.algalon.local
-    handle @sonarr {
-        reverse_proxy localhost:8989
-    }
-
-    @radarr host radarr.algalon.local
-    handle @radarr {
-        reverse_proxy localhost:7878
-    }
-
-    @lidarr host lidarr.algalon.local
-    handle @lidarr {
-        reverse_proxy localhost:8686
-    }
-
-    @bazarr host bazarr.algalon.local
-    handle @bazarr {
-        reverse_proxy localhost:6767
-    }
-
-    @qbittorrent host qbittorrent.algalon.local
-    handle @qbittorrent {
-        reverse_proxy localhost:8080
-    }
-
-    @nzbget host nzbget.algalon.local
-    handle @nzbget {
-        reverse_proxy localhost:6789
-    }
-
-    @prowlarr host prowlarr.algalon.local
-    handle @prowlarr {
-        reverse_proxy localhost:9696
-    }
-
-    @pihole host pihole.algalon.local
-    handle @pihole {
-        reverse_proxy localhost:8082
-    }
-
-    @syncthing host syncthing.algalon.local
-    handle @syncthing {
-        reverse_proxy localhost:8384
-    }
-
-    @ntfy host ntfy.algalon.local
-    handle @ntfy {
-        reverse_proxy localhost:8585
-    }
+    root * /srv/www
+    file_server
 }
